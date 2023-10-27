@@ -66,7 +66,7 @@ func (cm *CategoryModel) UpdateCategory(category Category, id int) bool{
 	// 	return false
 	// }
 	
-	if err != cm.db.Save(&category).Error; err != nil{
+	if err := cm.db.Save(&category).Error; err != nil{
 		logrus.Error("Model: Gagal mengubah data category", err.Error())
 		return false
 	}
@@ -75,7 +75,7 @@ func (cm *CategoryModel) UpdateCategory(category Category, id int) bool{
 func (cm *CategoryModel) DeleteCategory(id int) bool{
 	data := cm.GetCategory(id)
 	if data != nil{
-		logrus.Error("Model: Data Category Tidak Ditemukan", err.Error())
+		logrus.Error("Model: Data Category Tidak Ditemukan")
 		return false
 	}
 	if err := cm.db.Delete(&data).Error; err != nil{

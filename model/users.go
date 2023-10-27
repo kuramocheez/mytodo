@@ -6,7 +6,7 @@ import(
 )
 type UsersInterface interface{
 	Register(newUser Users) bool
-	Login(email, password string) *Users
+	Login(login Login) *Users
 }
 
 type Users struct{
@@ -29,8 +29,7 @@ func (um *UsersModel) InitUsers(db *gorm.DB){
 	um.db = db
 }
 
-func NewUsersModel(db *gorm.DB)
-UsersInterface{
+func NewUsersModel(db *gorm.DB) UsersInterface{
 	return &UsersModel{
 		db: db,
 	}
@@ -45,9 +44,9 @@ func (um *UsersModel) Register(newUser Users) bool{
 	return true
 }
 
-func (um *UsersModel) Login(email, password string) *Users{
+func (um *UsersModel) Login(login Login) *Users{
 	users := Users{}
-	if err := um.db.Where("email = ? AND password = ?", mail, password).First(&users).Error; err != nil{
+	if err := um.db.Where("email = ? AND password = ?", login.Email, login.Password).First(&users).Error; err != nil{
 		logrus.Error("Model: User Tidak Ditemukan", err.Error())
 	}
 	return &users

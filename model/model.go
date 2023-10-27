@@ -1,6 +1,6 @@
 package model
 
-import(
+import (
 	"fmt"
 	"mytodo/config"
 
@@ -9,10 +9,8 @@ import(
 	"gorm.io/gorm"
 )
 
-func InitModel(config config.DatabaseConfig) *gorm.DB{
-	dsn := {
-		fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
-	}
+func InitModel(config config.DatabaseConfig) *gorm.DB {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
 	db, err := gorm.Open(mysql.Open(dsn), & gorm.Config{})
 	if err != nil{
 		logrus.Error("Model: Tidak Dapat Terkoneksi Database, ", err.Error())
@@ -21,5 +19,5 @@ func InitModel(config config.DatabaseConfig) *gorm.DB{
 }
 
 func Migrate(db *gorm.DB){
-	db.AutoMigrate(&Users{}, &Category{})
+	db.AutoMigrate(&Users{})
 }
