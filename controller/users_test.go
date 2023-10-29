@@ -25,6 +25,11 @@ func TestUserController_Register(t *testing.T) {
 		Email:    "agus@gmail.com",
 		Password: "Something",
 	}
+	mockUserResult := &model.Users{
+		Name:     "Budi",
+		Email:    "agus@gmail.com",
+		Password: "Something",
+	}
 
 	tests := []struct {
 		name             string
@@ -35,7 +40,7 @@ func TestUserController_Register(t *testing.T) {
 		{
 			name: "should be success",
 			mock: func(m *mocks.UsersInterface) {
-				m.On("Register", mock.Anything).Return(true)
+				m.On("Register", mock.Anything).Return(mockUserResult)
 			},
 			expectedHttpCode: 201,
 			in:               mockRequest,
@@ -43,7 +48,7 @@ func TestUserController_Register(t *testing.T) {
 		{
 			name: "should be error, because unexpected return from register model",
 			mock: func(m *mocks.UsersInterface) {
-				m.On("Register", mock.Anything).Return(false)
+				m.On("Register", mock.Anything).Return(nil)
 			},
 			expectedHttpCode: 500,
 			in:               mockRequest,
@@ -51,7 +56,7 @@ func TestUserController_Register(t *testing.T) {
 		{
 			name: "should be error, because invalid parse body",
 			mock: func(m *mocks.UsersInterface) {
-				m.On("Register", mock.Anything).Return(false)
+				m.On("Register", mock.Anything).Return(nil)
 			},
 			expectedHttpCode: 400,
 			in: map[string]interface{}{
@@ -63,10 +68,11 @@ func TestUserController_Register(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(tt *testing.T) {
 			userMockModel := new(mocks.UsersInterface)
+			categoryMockModel := new(mocks.CategoryInterface)
 
 			tc.mock(userMockModel)
 
-			userController := NewUsersControllerInterface(userMockModel)
+			userController := NewUsersControllerInterface(userMockModel, categoryMockModel)
 			handlerFunc := userController.Register()
 
 			buf := new(bytes.Buffer)
@@ -158,10 +164,11 @@ func TestUsersController_Login(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			userMockModel := new(mocks.UsersInterface)
+			categoryMockModel := new(mocks.CategoryInterface)
 
 			tc.mock(userMockModel)
 
-			UsersController := NewUsersControllerInterface(userMockModel)
+			UsersController := NewUsersControllerInterface(userMockModel, categoryMockModel)
 			handlerFunc := UsersController.Login()
 
 			buf := new(bytes.Buffer)

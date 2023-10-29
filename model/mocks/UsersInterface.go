@@ -30,14 +30,16 @@ func (_m *UsersInterface) Login(login model.Login) *model.Users {
 }
 
 // Register provides a mock function with given fields: newUser
-func (_m *UsersInterface) Register(newUser model.Users) bool {
+func (_m *UsersInterface) Register(newUser model.Users) *model.Users {
 	ret := _m.Called(newUser)
 
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(model.Users) bool); ok {
+	var r0 *model.Users
+	if rf, ok := ret.Get(0).(func(model.Users) *model.Users); ok {
 		r0 = rf(newUser)
 	} else {
-		r0 = ret.Get(0).(bool)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.Users)
+		}
 	}
 
 	return r0

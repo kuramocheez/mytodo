@@ -1,17 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"mytodo/config"
 	"mytodo/controller"
 	"mytodo/model"
 	"mytodo/routes"
-	"fmt"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func main(){
+func main() {
 	e := echo.New()
 	config := config.InitConfig()
 
@@ -19,8 +19,9 @@ func main(){
 	model.Migrate(db)
 
 	usersModel := model.NewUsersModel(db)
+	categoryModel := model.NewCategoryModel(db)
 
-	usersController := controller.NewUsersControllerInterface(usersModel)
+	usersController := controller.NewUsersControllerInterface(usersModel, categoryModel)
 
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.LoggerWithConfig(

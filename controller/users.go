@@ -14,12 +14,14 @@ type UsersControllerInterface interface {
 }
 
 type UsersController struct {
-	model model.UsersInterface
+	model  model.UsersInterface
+	model2 model.CategoryInterface
 }
 
-func NewUsersControllerInterface(m model.UsersInterface) UsersControllerInterface {
+func NewUsersControllerInterface(m model.UsersInterface, c model.CategoryInterface) UsersControllerInterface {
 	return &UsersController{
-		model: m,
+		model:  m,
+		model2: c,
 	}
 }
 
@@ -31,10 +33,19 @@ func (uc *UsersController) Register() echo.HandlerFunc {
 		}
 
 		res := uc.model.Register(data)
-		if !res {
+		if res == nil {
 			return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Register Error, Something Error When Create Data", nil))
 		}
-		return c.JSON(http.StatusCreated, helper.FormatResponse("Register Successfull", nil))
+		catData := model.Category{
+			Category: "Pengingat Saya",
+			Color:    "#3f48cc",
+			UserID:   res.ID,
+		}
+		category := uc.model2.AddCategory(catData)
+		if !category {
+			return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Register Error, Something Error When Create Data", nil))
+		}
+		return c.JSON(http.StatusCreated, helper.FormatResponse("Register Successfull", res))
 	}
 }
 
