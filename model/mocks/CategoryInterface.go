@@ -27,13 +27,13 @@ func (_m *CategoryInterface) AddCategory(newCategory model.Category) bool {
 	return r0
 }
 
-// DeleteCategory provides a mock function with given fields: id
-func (_m *CategoryInterface) DeleteCategory(id int) bool {
-	ret := _m.Called(id)
+// DeleteCategory provides a mock function with given fields: id, idUser
+func (_m *CategoryInterface) DeleteCategory(id int, idUser uint) bool {
+	ret := _m.Called(id, idUser)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(int) bool); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(int, uint) bool); ok {
+		r0 = rf(id, idUser)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
@@ -41,13 +41,13 @@ func (_m *CategoryInterface) DeleteCategory(id int) bool {
 	return r0
 }
 
-// GetCategories provides a mock function with given fields:
-func (_m *CategoryInterface) GetCategories() []model.Category {
-	ret := _m.Called()
+// GetCategories provides a mock function with given fields: page, perpage, id
+func (_m *CategoryInterface) GetCategories(page int, perpage int, id uint) []model.Category {
+	ret := _m.Called(page, perpage, id)
 
 	var r0 []model.Category
-	if rf, ok := ret.Get(0).(func() []model.Category); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(int, int, uint) []model.Category); ok {
+		r0 = rf(page, perpage, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]model.Category)
@@ -57,13 +57,13 @@ func (_m *CategoryInterface) GetCategories() []model.Category {
 	return r0
 }
 
-// GetCategory provides a mock function with given fields: id
-func (_m *CategoryInterface) GetCategory(id int) *model.Category {
-	ret := _m.Called(id)
+// GetCategory provides a mock function with given fields: id, idUser
+func (_m *CategoryInterface) GetCategory(id int, idUser uint) *model.Category {
+	ret := _m.Called(id, idUser)
 
 	var r0 *model.Category
-	if rf, ok := ret.Get(0).(func(int) *model.Category); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(int, uint) *model.Category); ok {
+		r0 = rf(id, idUser)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Category)
@@ -73,13 +73,13 @@ func (_m *CategoryInterface) GetCategory(id int) *model.Category {
 	return r0
 }
 
-// UpdateCategory provides a mock function with given fields: category, id
-func (_m *CategoryInterface) UpdateCategory(category model.Category, id int) bool {
-	ret := _m.Called(category, id)
+// UpdateCategory provides a mock function with given fields: category, id, idUser
+func (_m *CategoryInterface) UpdateCategory(category model.Category, id int, idUser uint) bool {
+	ret := _m.Called(category, id, idUser)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(model.Category, int) bool); ok {
-		r0 = rf(category, id)
+	if rf, ok := ret.Get(0).(func(model.Category, int, uint) bool); ok {
+		r0 = rf(category, id, idUser)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}

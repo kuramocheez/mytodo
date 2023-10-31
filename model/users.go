@@ -13,7 +13,7 @@ type UsersInterface interface {
 type Users struct {
 	gorm.Model
 	Name     string `json:"name" form:"name" gorm:"type:varchar(255)"`
-	Email    string `json:"email" form:"email" gorm:"type:varchar(255)"`
+	Email    string `json:"email" form:"email" gorm:"type:varchar(255);uniqueIndex"`
 	Password string `json:"password" form:"password" gorm:"type:varchar(255)"`
 }
 
@@ -48,7 +48,8 @@ func (um *UsersModel) Register(newUser Users) *Users {
 func (um *UsersModel) Login(login Login) *Users {
 	users := Users{}
 	if err := um.db.Where("email = ? AND password = ?", login.Email, login.Password).First(&users).Error; err != nil {
-		logrus.Error("Model: User Tidak Ditemukan", err.Error())
+		logrus.Error("Model: User Tidak Ditemukan ", err.Error())
+		return nil
 	}
 	return &users
 }

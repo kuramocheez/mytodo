@@ -21,7 +21,8 @@ func main() {
 	usersModel := model.NewUsersModel(db)
 	categoryModel := model.NewCategoryModel(db)
 
-	usersController := controller.NewUsersControllerInterface(usersModel, categoryModel)
+	usersController := controller.NewUsersControllerInterface(usersModel, categoryModel, *config)
+	categoryController := controller.NewCategoryControllerInterface(categoryModel)
 
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.LoggerWithConfig(
@@ -29,6 +30,7 @@ func main() {
 			Format: "method=${method}, uri=${uri}, status=${status}, latency_human=${latency_human}\n",
 		}))
 	routes.RouteUsers(e, usersController)
+	routes.RouteCategory(e, categoryController, *config)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.ServerPort)).Error())
 }

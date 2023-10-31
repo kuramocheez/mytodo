@@ -3,38 +3,36 @@ package helper
 import (
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
+	"github.com/labstack/echo/v4"
 )
 
-const SECRET_JWT = "mytodo"
-
-type JWT_TOKEN struct {
-	Token string
+func GenerateJWT(signKey string, userID uint) map[string]any {
+	res := map[string]any{}
+	accessToken := generateToken(signKey, userID)
+	if accessToken == "" {
+		return nil
+	}
+	res["access_token"] = accessToken
+	return res
 }
 
-func CreateToken(userID uint) (string, error) {
+func generateToken(signKey string, id uint) string {
 	claims := jwt.MapClaims{}
-	claims["authorized"] = true
-	claims["userID"] = userID
+	claims["id"] = id
+	claims["iat"] = time.Now().Unix()
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(SECRET_JWT))
+	validToken, err := token.SignedString([]byte(signKey))
+	if err != nil {
+		return ""
+	}
+	return validToken
 }
 
-// func ExtractToken(token *jwt.Token) any{
-// 	if token.Valid {
-// 		var claims = token.Claims
-// 		expTime, _ := claims.GetExpirationTime()
-// 		fmt.Println(expTime.Time.Compare(time.Now()))
-// 		if expTime.Time.Compare(time.Now()) > 0 {
-
-// 			return token.Claims
-// 		}
-
-// 		logrus.Error("Token expired")
-// 		return nil
-
-// 	}
-// 	return nil
-// }
+func ExtractToken(name string, c echo.Context) jwt.MapClaims {
+	user := c.Get(name).(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	return claims
+}

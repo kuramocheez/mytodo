@@ -7,6 +7,7 @@ import (
 
 	"bytes"
 	"encoding/json"
+	"mytodo/config"
 	"mytodo/model"
 	"mytodo/model/mocks"
 	"net/http"
@@ -69,10 +70,11 @@ func TestUserController_Register(t *testing.T) {
 		t.Run(tc.name, func(tt *testing.T) {
 			userMockModel := new(mocks.UsersInterface)
 			categoryMockModel := new(mocks.CategoryInterface)
+			config := config.InitConfig()
 
 			tc.mock(userMockModel)
 
-			userController := NewUsersControllerInterface(userMockModel, categoryMockModel)
+			userController := NewUsersControllerInterface(userMockModel, categoryMockModel, *config)
 			handlerFunc := userController.Register()
 
 			buf := new(bytes.Buffer)
@@ -165,10 +167,11 @@ func TestUsersController_Login(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			userMockModel := new(mocks.UsersInterface)
 			categoryMockModel := new(mocks.CategoryInterface)
+			config := config.InitConfig()
 
 			tc.mock(userMockModel)
 
-			UsersController := NewUsersControllerInterface(userMockModel, categoryMockModel)
+			UsersController := NewUsersControllerInterface(userMockModel, categoryMockModel, *config)
 			handlerFunc := UsersController.Login()
 
 			buf := new(bytes.Buffer)

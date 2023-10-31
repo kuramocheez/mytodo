@@ -9,18 +9,19 @@ import (
 )
 
 // Database Config
-type DatabaseConfig struct {
+type ProgramConfig struct {
 	ServerPort int
 	DBPort     int
 	DBHost     string
 	DBUser     string
 	DBPassword string
 	DBName     string
+	Secret     string
 }
 
 // Initial Config untuk Load Config diawal
-func InitConfig() *DatabaseConfig {
-	var res = new(DatabaseConfig)
+func InitConfig() *ProgramConfig {
+	var res = new(ProgramConfig)
 	res = loadConfig()
 	if res == nil {
 		logrus.Fatal("Config: Tidak Dapat Terkoneksi Ke Database")
@@ -30,8 +31,8 @@ func InitConfig() *DatabaseConfig {
 }
 
 // Load Config dari Env
-func loadConfig() *DatabaseConfig {
-	var res = new(DatabaseConfig)
+func loadConfig() *ProgramConfig {
+	var res = new(ProgramConfig)
 
 	// Load Env
 	err := godotenv.Load(".env")
@@ -75,6 +76,10 @@ func loadConfig() *DatabaseConfig {
 	// Get DB Name Value
 	if val, found := os.LookupEnv("DBNAME"); found {
 		res.DBName = val
+	}
+
+	if val, found := os.LookupEnv("SECRET"); found {
+		res.Secret = val
 	}
 	return res
 }
