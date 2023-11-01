@@ -22,3 +22,16 @@ func RouteCategory(e *echo.Echo, cc controller.CategoryControllerInterface, cfg 
 	auth.PUT("/:id", cc.UpdateCategory())
 	auth.DELETE("/:id", cc.DeleteCategory())
 }
+
+func RouteTodo(e *echo.Echo, tc controller.TodoControllerInterface, cfg config.ProgramConfig) {
+	auth := e.Group("/todo")
+	auth.Use(mid.JWT([]byte(cfg.Secret)))
+	auth.GET("", tc.GetTodos())
+	auth.GET("/:id", tc.GetTodo())
+	auth.GET("/status", tc.GetTodoByStatus())
+	auth.GET("/date", tc.GetTodoByDate())
+	auth.POST("", tc.AddTodo())
+	auth.PUT("/:id", tc.UpdateTodo())
+	auth.PUT("/status/:id", tc.UpdateTodoStatus())
+	auth.DELETE("/:id", tc.DeleteTodo())
+}

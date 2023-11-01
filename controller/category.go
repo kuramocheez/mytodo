@@ -38,7 +38,7 @@ func (cc *CategoryController) AddCategory() echo.HandlerFunc {
 		data.UserID = uint(id)
 		res := cc.model.AddCategory(data)
 		if !res {
-			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Create Category Failed", nil))
+			return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Create Category Failed", nil))
 		}
 		return c.JSON(http.StatusCreated, helper.FormatResponse("Create Category Succesfull", nil))
 	}
@@ -100,7 +100,7 @@ func (cc *CategoryController) UpdateCategory() echo.HandlerFunc {
 		}
 		res := cc.model.UpdateCategory(category, idCategory, uint(idUser))
 		if !res {
-			return c.JSON(http.StatusNotFound, helper.FormatResponse("Update Category Failed", nil))
+			return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Update Category Failed", nil))
 		}
 		return c.JSON(http.StatusOK, helper.FormatResponse("Update Category Successfull", nil))
 	}
@@ -117,7 +117,7 @@ func (cc *CategoryController) DeleteCategory() echo.HandlerFunc {
 		}
 		res := cc.model.DeleteCategory(idCategory, uint(idUser))
 		if !res {
-			return c.JSON(http.StatusNotFound, helper.FormatResponse("Delete Category Failed", nil))
+			return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Delete Category Failed", nil))
 		}
 		return c.JSON(http.StatusOK, helper.FormatResponse("Delete Category Successfull", nil))
 	}

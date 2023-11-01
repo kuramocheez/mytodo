@@ -19,5 +19,5 @@ func InitModel(config config.ProgramConfig) *gorm.DB {
 }
 
 func Migrate(db *gorm.DB) {
-	db.AutoMigrate(&Users{}, &Category{})
+	db.AutoMigrate(&Users{}, &Category{}, &Todo{})
 }

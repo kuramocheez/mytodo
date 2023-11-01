@@ -81,5 +81,6 @@ func loadConfig() *ProgramConfig {
 	if val, found := os.LookupEnv("SECRET"); found {
 		res.Secret = val
 	}
+
 	return res
 }
