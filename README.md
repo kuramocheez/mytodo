@@ -19,4 +19,4 @@ Link: [Entity Relation Diagram](https://viewer.diagrams.net/?tags=%7B%7D&highlig
 
 ### API Documentation
 
-Link: [API Documentation]()
+Link: [API Documentation](https://documenter.getpostman.com/view/18496939/2s9YXceQaA)
