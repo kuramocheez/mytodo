@@ -22,7 +22,7 @@ func main() {
 	categoryModel := model.NewCategoryModel(db)
 	todoModel := model.NewTodoModel(db)
 
-	usersController := controller.NewUsersControllerInterface(usersModel, categoryModel, *config)
+	usersController := controller.NewUsersControllerInterface(usersModel, *config)
 	categoryController := controller.NewCategoryControllerInterface(categoryModel)
 	todoController := controller.NewTodoControllerInterface(todoModel)
 

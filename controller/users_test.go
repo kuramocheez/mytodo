@@ -69,12 +69,11 @@ func TestUserController_Register(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(tt *testing.T) {
 			userMockModel := new(mocks.UsersInterface)
-			categoryMockModel := new(mocks.CategoryInterface)
 			config := config.InitConfig()
 
 			tc.mock(userMockModel)
 
-			userController := NewUsersControllerInterface(userMockModel, categoryMockModel, *config)
+			userController := NewUsersControllerInterface(userMockModel, *config)
 			handlerFunc := userController.Register()
 
 			buf := new(bytes.Buffer)
@@ -166,12 +165,11 @@ func TestUsersController_Login(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			userMockModel := new(mocks.UsersInterface)
-			categoryMockModel := new(mocks.CategoryInterface)
 			config := config.InitConfig()
 
 			tc.mock(userMockModel)
 
-			UsersController := NewUsersControllerInterface(userMockModel, categoryMockModel, *config)
+			UsersController := NewUsersControllerInterface(userMockModel, *config)
 			handlerFunc := UsersController.Login()
 
 			buf := new(bytes.Buffer)

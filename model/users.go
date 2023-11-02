@@ -40,7 +40,15 @@ func (um *UsersModel) Register(newUser Users) *Users {
 	if err := um.db.Create(&newUser).Error; err != nil {
 		logrus.Error("Model: Error Saat Input Data User", err.Error())
 		return nil
-
+	}
+	category := Category{
+		Category: "Kegiatan Saya",
+		Color:    "#3f48cc",
+		UserID:   newUser.ID,
+	}
+	if err := um.db.Create(&category).Error; err != nil {
+		logrus.Error("Model: Error Saat Input Data User", err.Error())
+		return nil
 	}
 	return &newUser
 }
