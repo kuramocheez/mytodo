@@ -1,6 +1,8 @@
 package model
 
 import (
+	"time"
+
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -11,10 +13,13 @@ type UsersInterface interface {
 }
 
 type Users struct {
-	gorm.Model
-	Name     string `json:"name" form:"name" gorm:"type:varchar(255)"`
-	Email    string `json:"email" form:"email" gorm:"type:varchar(255);uniqueIndex"`
-	Password string `json:"password" form:"password" gorm:"type:varchar(255)"`
+	ID        uint      `json:"id" form:"id" gorm:"type:primaryKey;autoIncrement:true"`
+	Name      string    `json:"name" form:"name" gorm:"type:varchar(255)"`
+	Email     string    `json:"email" form:"email" gorm:"type:varchar(255);uniqueIndex"`
+	Password  string    `json:"password" form:"password" gorm:"type:varchar(255)"`
+	CreatedAt time.Time `json:"created_at" form:"created_at" gorm:"type:datetime"`
+	UpdatedAt time.Time `json:"updated_at" form:"updated_at" gorm:"type:datetime"`
+	DeletedAt time.Time `json:"deleted_at" form:"deleted_at" gorm:"type:datetime"`
 }
 
 type Login struct {

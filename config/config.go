@@ -35,9 +35,10 @@ func loadConfig() *ProgramConfig {
 	var res = new(ProgramConfig)
 
 	// Load Env
-	err := godotenv.Load(".env")
+	err := godotenv.Load()
 	if err != nil {
-		logrus.Fatal("Config: Tidak Dapat Meload File Config")
+		// fmt.Println(err)
+		logrus.Fatal("Config: Tidak Dapat Meload File Config ", err)
 	}
 
 	// Get Server Value

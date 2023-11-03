@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"mytodo/helper"
 	"mytodo/model"
 	"net/http"
@@ -29,10 +30,12 @@ func NewCategoryControllerInterface(m model.CategoryInterface) CategoryControlle
 
 func (cc *CategoryController) AddCategory() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		fmt.Println(c.Get("user"))
 		claims := helper.ExtractToken("user", c)
 		id := claims["id"].(float64)
 		data := model.Category{}
 		if err := c.Bind(&data); err != nil {
+			fmt.Println(err)
 			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Bind Data", nil))
 		}
 		data.UserID = uint(id)

@@ -50,7 +50,7 @@ func (tc *TodoController) AddTodo() echo.HandlerFunc {
 
 func (tc *TodoController) GetTodos() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		todo := []model.Todo{}
+		// todo := []model.Todo{}
 		claims := helper.ExtractToken("user", c)
 		id := claims["id"].(float64)
 		pageString := c.QueryParam("page")
@@ -63,7 +63,7 @@ func (tc *TodoController) GetTodos() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Content Value", nil))
 		}
-		todo = tc.model.GetTodos(page, content, uint(id))
+		todo := tc.model.GetTodos(page, content, uint(id))
 		if todo == nil {
 			return c.JSON(http.StatusNotFound, helper.FormatResponse("Data Not Found", nil))
 		}
@@ -103,8 +103,8 @@ func (tc *TodoController) GetTodoByStatus() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Content Value", nil))
 		}
-		todo := []model.Todo{}
-		todo = tc.model.GetTodoByStatus(page, content, uint(id), status)
+		// todo := []model.Todo{}
+		todo := tc.model.GetTodoByStatus(page, content, uint(id), status)
 		if todo == nil {
 			return c.JSON(http.StatusNotFound, helper.FormatResponse("Not Found", nil))
 		}
@@ -127,8 +127,8 @@ func (tc *TodoController) GetTodoByDate() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Content Value", nil))
 		}
-		todo := []model.Todo{}
-		todo = tc.model.GetTodoByDate(page, content, uint(id), date)
+		// todo := []model.Todo{}
+		todo := tc.model.GetTodoByDate(page, content, uint(id), date)
 		if todo == nil {
 			return c.JSON(http.StatusNotFound, helper.FormatResponse("Not Found", nil))
 		}
