@@ -9,10 +9,8 @@ import (
 
 type TodoInterface interface {
 	AddTodo(newTodo Todo) bool
-	GetTodos(page, content int, userID uint) []Todo
+	GetTodos(page, content int, userID uint, status, date string) []Todo
 	GetTodo(id int, userID uint) *Todo
-	GetTodoByStatus(page, content int, userID uint, status string) []Todo
-	GetTodoByDate(page, content int, userID uint, date string) []Todo
 	UpdateTodo(id int, userID uint, todo Todo) bool
 	UpdateTodoStatus(id int, UserID uint, status string) bool
 	DeleteTodo(id int, userID uint) bool
@@ -55,12 +53,26 @@ func (tm *TodoModel) AddTodo(newTodo Todo) bool {
 	return true
 }
 
-func (tm *TodoModel) GetTodos(page, content int, userID uint) []Todo {
+func (tm *TodoModel) GetTodos(page, content int, userID uint, status, datetime string) []Todo {
 	todo := []Todo{}
 	offset := (page - 1) * content
-	if err := tm.db.Limit(content).Offset(offset).Where("user_id = ?", userID).Find(&todo).Error; err != nil {
-		logrus.Error("Model: Error Mendapatkan Data Todo ", err.Error())
-		return nil
+	if status != "" {
+		if err := tm.db.Limit(content).Offset(offset).Where("user_id = ? AND status = ?", userID, status).Find(&todo).Error; err != nil {
+			logrus.Error("Model: Error Mendapatkan Data Todo Status ", err.Error())
+			return nil
+		}
+	}
+	if datetime != "" {
+		if err := tm.db.Limit(content).Offset(offset).Where("user_id = ? AND DATE(date_time) = ?", userID, datetime).Find(&todo).Error; err != nil {
+			logrus.Error("Model: Error Mendapatkan Data Todo Status ", err.Error())
+			return nil
+		}
+	}
+	if status == "" && datetime == "" {
+		if err := tm.db.Limit(content).Offset(offset).Where("user_id = ?", userID).Find(&todo).Error; err != nil {
+			logrus.Error("Model: Error Mendapatkan Data Todo ", err.Error())
+			return nil
+		}
 	}
 	for i := 0; i < len(todo); i++ {
 		category := Category{}
@@ -104,61 +116,6 @@ func (tm *TodoModel) GetTodo(id int, userID uint) *Todo {
 	todo.Category.User = user
 	todo.User = user
 	return &todo
-}
-
-func (tm *TodoModel) GetTodoByStatus(page, content int, userID uint, status string) []Todo {
-	todo := []Todo{}
-	offset := (page - 1) * content
-	if err := tm.db.Limit(content).Offset(offset).Where("user_id = ? AND status = ?", userID, status).Find(&todo).Error; err != nil {
-		logrus.Error("Model: Error Mendapatkan Data Todo Status ", err.Error())
-		return nil
-	}
-	for i := 0; i < len(todo); i++ {
-		category := Category{}
-		if err := tm.db.Where("id = ?", todo[i].CategoryID).First(&category).Error; err != nil {
-			logrus.Error("Model: Error Mendapatkan Data Category Todo ", err.Error())
-			return nil
-		}
-		todo[i].Category = category
-	}
-
-	for i := 0; i < len(todo); i++ {
-		user := Users{}
-		if err := tm.db.Where("id = ?", userID).First(&user).Error; err != nil {
-			logrus.Error("Model: Error Mendapatkan Data User Todo ", err.Error())
-			return nil
-		}
-		todo[i].Category.User = user
-		todo[i].User = user
-	}
-	return todo
-}
-func (tm *TodoModel) GetTodoByDate(page, content int, userID uint, datetime string) []Todo {
-	todo := []Todo{}
-	offset := (page - 1) * content
-	if err := tm.db.Limit(content).Offset(offset).Where("user_id = ? AND DATE(date_time) = ?", userID, datetime).Find(&todo).Error; err != nil {
-		logrus.Error("Model: Error Mendapatkan Data Todo Status ", err.Error())
-		return nil
-	}
-	for i := 0; i < len(todo); i++ {
-		category := Category{}
-		if err := tm.db.Where("id = ?", todo[i].CategoryID).First(&category).Error; err != nil {
-			logrus.Error("Model: Error Mendapatkan Data Category Todo ", err.Error())
-			return nil
-		}
-		todo[i].Category = category
-	}
-
-	for i := 0; i < len(todo); i++ {
-		user := Users{}
-		if err := tm.db.Where("id = ?", userID).First(&user).Error; err != nil {
-			logrus.Error("Model: Error Mendapatkan Data User Todo ", err.Error())
-			return nil
-		}
-		todo[i].Category.User = user
-		todo[i].User = user
-	}
-	return todo
 }
 
 func (tm *TodoModel) UpdateTodo(id int, userID uint, todo Todo) bool {

@@ -13,8 +13,6 @@ type TodoControllerInterface interface {
 	AddTodo() echo.HandlerFunc
 	GetTodos() echo.HandlerFunc
 	GetTodo() echo.HandlerFunc
-	GetTodoByStatus() echo.HandlerFunc
-	GetTodoByDate() echo.HandlerFunc
 	UpdateTodo() echo.HandlerFunc
 	UpdateTodoStatus() echo.HandlerFunc
 	DeleteTodo() echo.HandlerFunc
@@ -63,7 +61,9 @@ func (tc *TodoController) GetTodos() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Content Value", nil))
 		}
-		todo := tc.model.GetTodos(page, content, uint(id))
+		status := c.QueryParam("status")
+		date := c.QueryParam("date")
+		todo := tc.model.GetTodos(page, content, uint(id), status, date)
 		if todo == nil {
 			return c.JSON(http.StatusNotFound, helper.FormatResponse("Data Not Found", nil))
 		}
@@ -85,54 +85,6 @@ func (tc *TodoController) GetTodo() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, helper.FormatResponse("Data Not Found", nil))
 		}
 		return c.JSON(http.StatusOK, helper.FormatResponse("Get Todo Successfull", res))
-	}
-}
-
-func (tc *TodoController) GetTodoByStatus() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		claims := helper.ExtractToken("user", c)
-		id := claims["id"].(float64)
-		status := c.QueryParam("status")
-		pageString := c.QueryParam("page")
-		page, err := strconv.Atoi(pageString)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Page Value", nil))
-		}
-		contentString := c.QueryParam("content")
-		content, err := strconv.Atoi(contentString)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Content Value", nil))
-		}
-		// todo := []model.Todo{}
-		todo := tc.model.GetTodoByStatus(page, content, uint(id), status)
-		if todo == nil {
-			return c.JSON(http.StatusNotFound, helper.FormatResponse("Not Found", nil))
-		}
-		return c.JSON(http.StatusOK, helper.FormatResponse("Get Todo Successful", todo))
-	}
-}
-
-func (tc *TodoController) GetTodoByDate() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		claims := helper.ExtractToken("user", c)
-		id := claims["id"].(float64)
-		date := c.QueryParam("date")
-		pageString := c.QueryParam("page")
-		page, err := strconv.Atoi(pageString)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Page Value", nil))
-		}
-		contentString := c.QueryParam("content")
-		content, err := strconv.Atoi(contentString)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Content Value", nil))
-		}
-		// todo := []model.Todo{}
-		todo := tc.model.GetTodoByDate(page, content, uint(id), date)
-		if todo == nil {
-			return c.JSON(http.StatusNotFound, helper.FormatResponse("Not Found", nil))
-		}
-		return c.JSON(http.StatusOK, helper.FormatResponse("Get Todo Successful", todo))
 	}
 }
 
