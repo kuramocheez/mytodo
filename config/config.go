@@ -17,6 +17,7 @@ type ProgramConfig struct {
 	DBPassword string
 	DBName     string
 	Secret     string
+	ApiKey     string
 }
 
 // Initial Config untuk Load Config diawal
@@ -81,6 +82,10 @@ func loadConfig() *ProgramConfig {
 
 	if val, found := os.LookupEnv("SECRET"); found {
 		res.Secret = val
+	}
+
+	if val, found := os.LookupEnv("APIKEY"); found {
+		res.ApiKey = val
 	}
 
 	return res

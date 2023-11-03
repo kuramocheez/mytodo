@@ -21,10 +21,12 @@ func main() {
 	usersModel := model.NewUsersModel(db)
 	categoryModel := model.NewCategoryModel(db)
 	todoModel := model.NewTodoModel(db)
+	todoAIModel := model.NewTodoAIModel(db)
 
 	usersController := controller.NewUsersControllerInterface(usersModel, *config)
 	categoryController := controller.NewCategoryControllerInterface(categoryModel)
 	todoController := controller.NewTodoControllerInterface(todoModel)
+	todoAIController := controller.NewTodoAIControllerInterface(todoAIModel, *config)
 
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.LoggerWithConfig(
@@ -34,6 +36,7 @@ func main() {
 	routes.RouteUsers(e, usersController)
 	routes.RouteCategory(e, categoryController, *config)
 	routes.RouteTodo(e, todoController, *config)
+	routes.RouteTodoAI(e, todoAIController, *config)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.ServerPort)).Error())
 }

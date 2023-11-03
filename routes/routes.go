@@ -28,10 +28,14 @@ func RouteTodo(e *echo.Echo, tc controller.TodoControllerInterface, cfg config.P
 	auth.Use(mid.JWT([]byte(cfg.Secret)))
 	auth.GET("", tc.GetTodos())
 	auth.GET("/:id", tc.GetTodo())
-	// auth.GET("/status", tc.GetTodoByStatus())
-	// auth.GET("/date", tc.GetTodoByDate())
 	auth.POST("", tc.AddTodo())
 	auth.PUT("/:id", tc.UpdateTodo())
 	auth.PUT("/status/:id", tc.UpdateTodoStatus())
 	auth.DELETE("/:id", tc.DeleteTodo())
+}
+
+func RouteTodoAI(e *echo.Echo, tc controller.TodoAIControllerInterface, cfg config.ProgramConfig) {
+	auth := e.Group("/todoai")
+	auth.Use(mid.JWT([]byte(cfg.Secret)))
+	auth.POST("", tc.TodoAI())
 }
