@@ -117,8 +117,7 @@ func (tc *TodoController) UpdateTodoStatus() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, helper.FormatResponse("Format Id Wrong", nil))
 		}
-		status := c.QueryParam("status")
-		res := tc.model.UpdateTodoStatus(idTodo, uint(id), status)
+		res := tc.model.UpdateTodoStatus(idTodo, uint(id), "Done")
 		if !res {
 			return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Update Todo Status Failed", nil))
 		}

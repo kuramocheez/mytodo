@@ -377,6 +377,85 @@ func TestTodoController_UpdateTodo(t *testing.T) {
 	}
 
 }
+func TestTodoController_UpdateTodoStatus(t *testing.T) {
+	mockRequest := model.Todo{}
+	test := []struct {
+		name             string
+		mock             func(*mocks.TodoInterface)
+		expectedHttpCode int
+		in               any
+		id               string
+	}{
+		{
+			name: "Should be Success",
+			mock: func(m *mocks.TodoInterface) {
+				m.On("UpdateTodoStatus", mock.Anything, mock.Anything, mock.Anything).Return(true)
+			},
+			expectedHttpCode: 200,
+			in:               mockRequest,
+			id:               "1",
+		},
+		{
+			name: "Should be error, because unexpected return from todo model",
+			mock: func(m *mocks.TodoInterface) {
+				m.On("UpdateTodoStatus", mock.Anything, mock.Anything, mock.Anything).Return(false)
+			},
+			expectedHttpCode: 500,
+			in:               mockRequest,
+			id:               "1",
+		},
+		{
+			name: "Should be error, because id value format wrong",
+			mock: func(m *mocks.TodoInterface) {
+				m.On("UpdateTodoStatus", mock.Anything, mock.Anything, mock.Anything).Return(false)
+			},
+			expectedHttpCode: 400,
+			in:               mockRequest,
+			id:               "!",
+		},
+	}
+	for _, tc := range test {
+		t.Run(tc.name, func(tt *testing.T) {
+			e := echo.New()
+
+			todoMockModel := new(mocks.TodoInterface)
+
+			tc.mock(todoMockModel)
+
+			todoController := NewTodoControllerInterface(todoMockModel)
+
+			buf := new(bytes.Buffer)
+			err := json.NewEncoder(buf).Encode(tc.in)
+			require.NoError(t, err)
+
+			req := httptest.NewRequest(http.MethodPut, "/todo/status/:id", strings.NewReader(buf.String()))
+			req.Header.Set("Content-Type", "application/json")
+			res := httptest.NewRecorder()
+
+			jwtMock := jwt.New(jwt.SigningMethodHS256)
+			jwtMock.Claims = jwt.MapClaims{
+				"id": float64(1),
+			}
+
+			var jwtMockItf interface{} = jwtMock
+
+			ctx := e.NewContext(req, res)
+			ctx.Set("user", jwtMockItf)
+			ctx.SetParamNames("id")
+			ctx.SetParamValues(tc.id)
+
+			err = todoController.UpdateTodoStatus()(ctx)
+			require.NoError(t, err)
+
+			w := res.Result()
+			_, err = io.ReadAll(w.Body)
+			require.NoError(t, err)
+
+			require.Equal(t, tc.expectedHttpCode, w.StatusCode)
+		})
+	}
+
+}
 
 func TestTodoController_DeleteTodo(t *testing.T) {
 	mockRequest := model.Todo{}

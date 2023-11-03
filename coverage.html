@@ -1,0 +1,493 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>controller: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">mytodo/controller/category.go (100.0%)</option>
+				
+				<option value="file1">mytodo/controller/todo.go (100.0%)</option>
+				
+				<option value="file2">mytodo/controller/todoai.go (100.0%)</option>
+				
+				<option value="file3">mytodo/controller/users.go (95.5%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package controller
+
+import (
+        "fmt"
+        "mytodo/helper"
+        "mytodo/model"
+        "net/http"
+        "strconv"
+
+        "github.com/labstack/echo/v4"
+)
+
+type CategoryControllerInterface interface {
+        AddCategory() echo.HandlerFunc
+        GetCategories() echo.HandlerFunc
+        GetCategory() echo.HandlerFunc
+        UpdateCategory() echo.HandlerFunc
+        DeleteCategory() echo.HandlerFunc
+}
+
+type CategoryController struct {
+        model model.CategoryInterface
+}
+
+func NewCategoryControllerInterface(m model.CategoryInterface) CategoryControllerInterface <span class="cov8" title="1">{
+        return &amp;CategoryController{
+                model: m,
+        }
+}</span>
+
+func (cc *CategoryController) AddCategory() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                fmt.Println(c.Get("user"))
+                claims := helper.ExtractToken("user", c)
+                id := claims["id"].(float64)
+                data := model.Category{}
+                if err := c.Bind(&amp;data); err != nil </span><span class="cov8" title="1">{
+                        fmt.Println(err)
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Bind Data", nil))
+                }</span>
+                <span class="cov8" title="1">data.UserID = uint(id)
+                res := cc.model.AddCategory(data)
+                if !res </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Create Category Failed", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusCreated, helper.FormatResponse("Create Category Succesfull", nil))</span>
+        }
+}
+
+func (cc *CategoryController) GetCategories() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                categories := []model.Category{}
+                claims := helper.ExtractToken("user", c)
+                id := claims["id"].(float64)
+                pageString := c.QueryParam("page")
+                page, err := strconv.Atoi(pageString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Page Value", nil))
+                }</span>
+                <span class="cov8" title="1">perPageString := c.QueryParam("content")
+                perPage, err := strconv.Atoi(perPageString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Content Value", nil))
+                }</span>
+                <span class="cov8" title="1">categories = cc.model.GetCategories(page, perPage, uint(id))
+                if categories == nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusNotFound, helper.FormatResponse("Data Not Found", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusOK, helper.FormatResponse("Success Get Categories Data", &amp;categories))</span>
+        }
+}
+
+func (cc *CategoryController) GetCategory() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                claims := helper.ExtractToken("user", c)
+                idUser := claims["id"].(float64)
+                idCategoryString := c.Param("id")
+                idCategory, err := strconv.Atoi(idCategoryString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Id Category Format Wrong", nil))
+                }</span>
+                <span class="cov8" title="1">res := cc.model.GetCategory(idCategory, uint(idUser))
+                if res == nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusNotFound, helper.FormatResponse("Data Not Found", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusOK, helper.FormatResponse("Get Category Successfull", res))</span>
+        }
+}
+
+func (cc *CategoryController) UpdateCategory() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                claims := helper.ExtractToken("user", c)
+                idUser := claims["id"].(float64)
+                idCategoryString := c.Param("id")
+                category := model.Category{}
+                err := c.Bind(&amp;category)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Bind Data", nil))
+                }</span>
+                <span class="cov8" title="1">idCategory, err := strconv.Atoi(idCategoryString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Id Category Format Wrong", nil))
+                }</span>
+                <span class="cov8" title="1">res := cc.model.UpdateCategory(category, idCategory, uint(idUser))
+                if !res </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Update Category Failed", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusOK, helper.FormatResponse("Update Category Successfull", nil))</span>
+        }
+}
+
+func (cc *CategoryController) DeleteCategory() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                claims := helper.ExtractToken("user", c)
+                idUser := claims["id"].(float64)
+                idCategoryString := c.Param("id")
+                idCategory, err := strconv.Atoi(idCategoryString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Id Category Format Wrong", nil))
+                }</span>
+                <span class="cov8" title="1">res := cc.model.DeleteCategory(idCategory, uint(idUser))
+                if !res </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Delete Category Failed", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusOK, helper.FormatResponse("Delete Category Successfull", nil))</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package controller
+
+import (
+        "mytodo/helper"
+        "mytodo/model"
+        "net/http"
+        "strconv"
+
+        "github.com/labstack/echo/v4"
+)
+
+type TodoControllerInterface interface {
+        AddTodo() echo.HandlerFunc
+        GetTodos() echo.HandlerFunc
+        GetTodo() echo.HandlerFunc
+        UpdateTodo() echo.HandlerFunc
+        UpdateTodoStatus() echo.HandlerFunc
+        DeleteTodo() echo.HandlerFunc
+}
+
+type TodoController struct {
+        model model.TodoInterface
+}
+
+func NewTodoControllerInterface(m model.TodoInterface) TodoControllerInterface <span class="cov8" title="1">{
+        return &amp;TodoController{
+                model: m,
+        }
+}</span>
+
+func (tc *TodoController) AddTodo() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                claims := helper.ExtractToken("user", c)
+                id := claims["id"].(float64)
+                data := model.Todo{}
+                if err := c.Bind(&amp;data); err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Bind Data", nil))
+                }</span>
+                <span class="cov8" title="1">data.Status = "OnGoing"
+                data.UserID = uint(id)
+                res := tc.model.AddTodo(data)
+                if !res </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Create Todo Failed", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusCreated, helper.FormatResponse("Create Todo Successfull", nil))</span>
+        }
+}
+
+func (tc *TodoController) GetTodos() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                // todo := []model.Todo{}
+                claims := helper.ExtractToken("user", c)
+                id := claims["id"].(float64)
+                pageString := c.QueryParam("page")
+                page, err := strconv.Atoi(pageString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Page Value", nil))
+                }</span>
+                <span class="cov8" title="1">perPageString := c.QueryParam("content")
+                content, err := strconv.Atoi(perPageString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Get Content Value", nil))
+                }</span>
+                <span class="cov8" title="1">status := c.QueryParam("status")
+                date := c.QueryParam("date")
+                todo := tc.model.GetTodos(page, content, uint(id), status, date)
+                if todo == nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusNotFound, helper.FormatResponse("Data Not Found", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusOK, helper.FormatResponse("Get Todo Successfull", todo))</span>
+        }
+}
+
+func (tc *TodoController) GetTodo() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                claims := helper.ExtractToken("user", c)
+                id := claims["id"].(float64)
+                idTodoString := c.Param("id")
+                idTodo, err := strconv.Atoi(idTodoString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Id Category Format Wrong", nil))
+                }</span>
+                <span class="cov8" title="1">res := tc.model.GetTodo(idTodo, uint(id))
+                if res == nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusNotFound, helper.FormatResponse("Data Not Found", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusOK, helper.FormatResponse("Get Todo Successfull", res))</span>
+        }
+}
+
+func (tc *TodoController) UpdateTodo() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                claims := helper.ExtractToken("user", c)
+                id := claims["id"].(float64)
+                idTodoString := c.Param("id")
+                idTodo, err := strconv.Atoi(idTodoString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Format Id", nil))
+                }</span>
+                <span class="cov8" title="1">todo := model.Todo{}
+                if err := c.Bind(&amp;todo); err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Error Bind Data", nil))
+                }</span>
+                <span class="cov8" title="1">res := tc.model.UpdateTodo(idTodo, uint(id), todo)
+                if !res </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Update Todo Failed", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusOK, helper.FormatResponse("Update Todo Successfull", nil))</span>
+        }
+}
+func (tc *TodoController) UpdateTodoStatus() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                claims := helper.ExtractToken("user", c)
+                id := claims["id"].(float64)
+                idTodoString := c.Param("id")
+                idTodo, err := strconv.Atoi(idTodoString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Format Id Wrong", nil))
+                }</span>
+                <span class="cov8" title="1">res := tc.model.UpdateTodoStatus(idTodo, uint(id), "Done")
+                if !res </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Update Todo Status Failed", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusOK, helper.FormatResponse("Update Todo Status Successfull", nil))</span>
+        }
+}
+
+func (tc *TodoController) DeleteTodo() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                claims := helper.ExtractToken("user", c)
+                id := claims["id"].(float64)
+                idTodoString := c.Param("id")
+                idTodo, err := strconv.Atoi(idTodoString)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Format Id Wrong", nil))
+                }</span>
+                <span class="cov8" title="1">res := tc.model.DeleteTodo(idTodo, uint(id))
+                if !res </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Delete Todo Failed", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusOK, helper.FormatResponse("Delete Todo Successfull", nil))</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package controller
+
+import (
+        "mytodo/config"
+        "mytodo/helper"
+        "mytodo/model"
+        "net/http"
+
+        "github.com/labstack/echo/v4"
+        "github.com/sashabaranov/go-openai"
+)
+
+type TodoAIControllerInterface interface {
+        TodoAI() echo.HandlerFunc
+}
+
+type TodoAIController struct {
+        model model.TodoAIInterface
+        cfg   config.ProgramConfig
+}
+
+func NewTodoAIControllerInterface(m model.TodoAIInterface, cf config.ProgramConfig) TodoAIControllerInterface <span class="cov8" title="1">{
+        return &amp;TodoAIController{
+                model: m,
+                cfg:   cf,
+        }
+}</span>
+
+func (tc *TodoAIController) TodoAI() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                todoai := model.TodoAI{}
+                err := c.Bind(&amp;todoai)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Get Response Error Because Bind Data Error", nil))
+                }</span>
+                <span class="cov8" title="1">key := tc.cfg.ApiKey
+                res, err := tc.model.GetResponseAPI(c, key, todoai)
+                if err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Get Recomendation Todo Failed", nil))
+                }</span>
+                <span class="cov8" title="1">resp := openai.ChatCompletionMessage{
+                        Content: res.Choices[0].Message.Content,
+                }
+                return c.JSON(http.StatusCreated, helper.FormatResponse("Get Recomendation Todo Successfull", resp))</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package controller
+
+import (
+        "mytodo/config"
+        "mytodo/helper"
+        "mytodo/model"
+        "net/http"
+
+        "github.com/labstack/echo/v4"
+)
+
+type UsersControllerInterface interface {
+        Register() echo.HandlerFunc
+        Login() echo.HandlerFunc
+}
+
+type UsersController struct {
+        cfg   config.ProgramConfig
+        model model.UsersInterface
+}
+
+func NewUsersControllerInterface(m model.UsersInterface, cf config.ProgramConfig) UsersControllerInterface <span class="cov8" title="1">{
+        return &amp;UsersController{
+                model: m,
+                cfg:   cf,
+        }
+}</span>
+
+func (uc *UsersController) Register() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                data := model.Users{}
+                if err := c.Bind(&amp;data); err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Register Failed, Error Bind Data", nil))
+                }</span>
+
+                <span class="cov8" title="1">res := uc.model.Register(data)
+                if res == nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusInternalServerError, helper.FormatResponse("Register Failed", nil))
+                }</span>
+                <span class="cov8" title="1">return c.JSON(http.StatusCreated, helper.FormatResponse("Register Successfull", res))</span>
+        }
+}
+
+func (uc *UsersController) Login() echo.HandlerFunc <span class="cov8" title="1">{
+        return func(c echo.Context) error </span><span class="cov8" title="1">{
+                data := model.Login{}
+                if err := c.Bind(&amp;data); err != nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Login Failed, Error Bind Data", nil))
+                }</span>
+                <span class="cov8" title="1">res := uc.model.Login(data)
+                if res == nil </span><span class="cov8" title="1">{
+                        return c.JSON(http.StatusNotFound, helper.FormatResponse("Login Failed, Username or Password Wrong", nil))
+                }</span>
+                <span class="cov8" title="1">token := helper.GenerateJWT(uc.cfg.Secret, res.ID)
+                if token == nil </span><span class="cov0" title="0">{
+                        return c.JSON(http.StatusBadRequest, helper.FormatResponse("Login Failed, Error Generate JWT", nil))
+                }</span>
+                <span class="cov8" title="1">token["info"] = res
+                c.Set("user", token["access_token"])
+                return c.JSON(http.StatusOK, helper.FormatResponse("Login Successfull", token))</span>
+        }
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
