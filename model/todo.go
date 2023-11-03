@@ -17,18 +17,19 @@ type TodoInterface interface {
 }
 
 type Todo struct {
-	ID       uint      `json:"id" form:"id" gorm:"type:primaryKey;autoIncrement:true"`
+	// ID       uint      `json:"id" form:"id" gorm:"type:primaryKey;autoIncrement:true"`
+	gorm.Model
 	Memo     string    `json:"memo" form:"memo" gorm:"type:varchar(255)"`
 	DateTime time.Time `json:"date_time" form:"date_time" gorm:"datetime"`
 	// Filename   string
-	Status     string
-	CreatedAt  time.Time `json:"created_at" form:"created_at" gorm:"type:datetime"`
-	UpdatedAt  time.Time `json:"updated_at" form:"updated_at" gorm:"type:datetime"`
-	DeletedAt  time.Time `json:"deleted_at" form:"deleted_at" gorm:"type:datetime"`
-	CategoryID uint      `json:"category_id" form:"category_id"`
-	Category   Category  `json:"category" form:"category"`
-	UserID     uint      `json:"user_id" form:"user_id"`
-	User       Users     `json:"user" form:"user"`
+	Status string
+	// CreatedAt  time.Time `json:"created_at" form:"created_at" gorm:"type:datetime"`
+	// UpdatedAt  time.Time `json:"updated_at" form:"updated_at" gorm:"type:datetime"`
+	// DeletedAt  time.Time `json:"deleted_at" form:"deleted_at" gorm:"type:datetime"`
+	CategoryID uint     `json:"category_id" form:"category_id"`
+	Category   Category `json:"category" form:"category"`
+	UserID     uint     `json:"user_id" form:"user_id"`
+	User       Users    `json:"user" form:"user"`
 }
 
 type TodoModel struct {

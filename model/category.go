@@ -1,8 +1,6 @@
 package model
 
 import (
-	"time"
-
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -16,14 +14,15 @@ type CategoryInterface interface {
 }
 
 type Category struct {
-	ID        uint      `json:"id" form:"id" gorm:"type:primaryKey;autoIncrement:true"`
-	Category  string    `json:"category" form:"category" gorm:"type:varchar(255)"`
-	Color     string    `json:"color" form:"color" gorm:"type:varchar(255)"`
-	CreatedAt time.Time `json:"created_at" form:"created_at" gorm:"type:datetime"`
-	UpdatedAt time.Time `json:"updated_at" form:"updated_at" gorm:"type:datetime"`
-	DeletedAt time.Time `json:"deleted_at" form:"deleted_at" gorm:"type:datetime"`
-	UserID    uint      `json:"user_id" form:"user_id"`
-	User      Users     `json:"user" form:"user"`
+	// ID        uint      `json:"id" form:"id" gorm:"type:primaryKey;autoIncrement:true"`
+	gorm.Model
+	Category string `json:"category" form:"category" gorm:"type:varchar(255)"`
+	Color    string `json:"color" form:"color" gorm:"type:varchar(255)"`
+	// CreatedAt time.Time `json:"created_at" form:"created_at" gorm:"type:datetime"`
+	// UpdatedAt time.Time `json:"updated_at" form:"updated_at" gorm:"type:datetime"`
+	// DeletedAt time.Time `json:"deleted_at" form:"deleted_at" gorm:"type:datetime"`
+	UserID uint  `json:"user_id" form:"user_id"`
+	User   Users `json:"user" form:"user"`
 }
 
 type CategoryModel struct {

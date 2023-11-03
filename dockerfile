@@ -6,6 +6,6 @@ WORKDIR /app
 
 RUN go mod tidy
 
-RUN go build -o /app .
+RUN go build -o app .
 
 CMD ["/app/app"]
