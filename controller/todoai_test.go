@@ -22,7 +22,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCategoryController_TodoAI(t *testing.T) {
+func TestTodoController_TodoAI(t *testing.T) {
 	mockRequest := model.TodoAI{
 		Todo: "Olahraga",
 		Time: time.Date(2023, 11, 03, 14, 0, 0, 0, time.Local),
