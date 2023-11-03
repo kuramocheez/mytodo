@@ -36,7 +36,16 @@ func TestTodoController_TodoAI(t *testing.T) {
 		{
 			name: "Should be Success",
 			mock: func(m *mocks.TodoAIInterface) {
-				m.On("GetResponseAPI", mock.Anything, mock.Anything, mock.Anything).Return(openai.ChatCompletionResponse{}, nil)
+				m.On("GetResponseAPI", mock.Anything, mock.Anything, mock.Anything).Return(openai.ChatCompletionResponse{
+					Choices: []openai.ChatCompletionChoice{
+						{
+							Message: openai.ChatCompletionMessage{
+								Role:    "system",
+								Content: "lorem ipsum",
+							},
+						},
+					},
+				}, nil)
 			},
 			expectedHttpCode: 201,
 			in:               mockRequest,
@@ -44,7 +53,7 @@ func TestTodoController_TodoAI(t *testing.T) {
 		{
 			name: "Should be error, because unexpected return from TodoAI model",
 			mock: func(m *mocks.TodoAIInterface) {
-				m.On("GetResponseAPI", mock.Anything, mock.Anything, mock.Anything).Return(nil, errors.New("Something error"))
+				m.On("GetResponseAPI", mock.Anything, mock.Anything, mock.Anything).Return(openai.ChatCompletionResponse{}, errors.New("Something error"))
 			},
 			expectedHttpCode: 500,
 			in:               mockRequest,
